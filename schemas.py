@@ -12,7 +12,7 @@ class UserBase(BaseModel):
     
     
 class UserRequest(BaseModel):
-    password_hash:str
+    password:str
     
     class config:
         orm_mode = True
