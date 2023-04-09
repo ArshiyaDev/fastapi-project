@@ -14,7 +14,7 @@ class UserModel(db.Base):
     phone = sqlalchemy.Column(sqlalchemy.String)
     password_hash = sqlalchemy.Column(sqlalchemy.String)
     created_at = sqlalchemy.Column(sqlalchemy.DateTime,default = datetime.datetime.utcnow())
-    posts = orm.relationship("Post",back_populates="user")
+    posts = orm.relationship("PostModel",back_populates="user")
     
     
     def password_verification(self, password:str):
@@ -30,7 +30,7 @@ class PostModel(db.Base):
     post_description = sqlalchemy.Column(sqlalchemy.String,index=True)
     image = sqlalchemy.Column(sqlalchemy.String,index=True)
     created_at = sqlalchemy.Column(sqlalchemy.DateTime,index=True,default=datetime.datetime.utcnow())
-    user = orm.relationship("User",back_populates="posts")
+    user = orm.relationship("UserModel",back_populates="posts")
 
     
     

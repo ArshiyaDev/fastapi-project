@@ -1,4 +1,4 @@
-from fastapi import FastAPI , Depends,HTTPException
+from fastapi import FastAPI , Depends , HTTPException
 import schemas
 import services
 from sqlalchemy import orm
@@ -8,7 +8,7 @@ app = FastAPI()
 
 @app.post('/api/v1/users')
 async def register_user(
-    user:schemas.UserRequest,db:orm.Session = Depends(services.get_db)):
+    user:schemas.UserBase,db:orm.Session = Depends(services.get_db)):
 
     db_user = await services.GetUserByEmail(email=user.email,db=db)
     

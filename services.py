@@ -19,7 +19,7 @@ def get_db():
     try:
         yield databese
     finally:
-        db.close()
+        databese.close()
 
 
 async def GetUserByEmail(email:str, db:sqlalchemy.orm.Session):
@@ -49,7 +49,7 @@ async  def create_user(user:schemas.UserRequest, db:sqlalchemy.orm.Session):
 async def create_token(user:models.UserModel):
     
     
-    user_shema = schemas.UserBase.from_orm(user)
+    user_shema = schemas.UserResponse.from_orm(user)
     # convert object to dictinaory
     user_dict = user_shema.dict()
     del user_dict['created_at']

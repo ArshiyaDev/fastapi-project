@@ -11,17 +11,18 @@ class UserBase(BaseModel):
     
     
     
-class UserRequest(BaseModel):
+    
+class UserRequest(UserBase):
     password:str
     
-    class config:
-        orm_mode = True
+    class Config:
+        orm_mode=True
 
-class UserResponse(BaseModel):
+class UserResponse(UserBase):
     id : int
     created_at : datetime.datetime
-    class config:
-        orm_mode = True
+    class Config:
+       orm_mode=True
 
     
 
