@@ -33,12 +33,15 @@ class PostBase(BaseModel):
     image:str
     
 
-class PostRequest(BaseModel):
+class PostRequest(PostBase):
     pass
 
 
-class Response(PostBase):
+class PostResponse(PostBase):
     id:int
     user_id:int
     created_at:datetime.datetime
+    
+    class Config:
+       orm_mode=True
     
