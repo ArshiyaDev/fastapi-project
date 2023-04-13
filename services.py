@@ -102,3 +102,49 @@ async def create_post(user:schemas.UserResponse,post:schemas.PostRequest,db:sqla
     return schemas.PostResponse.from_orm(post)
     
     
+
+async def get_post_by_user(user:schemas.UserResponse,db:sqlalchemy.orm.Session):
+    
+    posts = db.query(models.PostModel).filter_by(user_id=user.id)
+    # convert each post model to post chema and make list of posts and return them
+    return list(map(schemas.PostResponse.from_orm,posts))
+
+
+
+async def get_post_detail(post_id:int,db:sqlalchemy.orm.Session):
+    
+    db_post = db.query(models.PostModel).filter(models.PostModel.id == post_id).first()
+    
+    if db_post is None:
+        raise HTTPException(status_code=404,detail='Post not found')
+    
+    # return schemas.PostResponse.from_orm(db_post)
+    return db_post    
+    
+    
+    
+async def delete_post(post:models.PostModel,db:sqlalchemy.orm.Session):
+    
+    db.delete(post)
+    db.commit()
+    
+    
+async def update_post_detail(
+    post_request:schemas.PostRequest,
+    post:models.PostModel,
+    db:sqlalchemy.orm.Session
+):
+    
+    post.post_title = post_request.post_title
+    post.post_description = post_request.post_description
+    post.image  = post_request.image
+    
+    db.commit()
+    db.refresh(post)
+    
+    
+    return schemas.PostResponse.from_orm(post)
+    
+    
+    
+    
