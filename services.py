@@ -24,7 +24,11 @@ def get_db():
         databese.close()
 
 
-async def GetUserByEmail(email:str, db:sqlalchemy.orm.Session):
+async def GetUserByEmail(
+    email:str, 
+    db:sqlalchemy.orm.Session
+):
+    
     return db.query(models.UserModel).filter(models.UserModel.email == email).first()
 
 
@@ -61,7 +65,12 @@ async def create_token(user:models.UserModel):
 
     
 
-async def login(email:str, password:str,db:sqlalchemy.orm.Session):
+async def login(
+    email:str, 
+    password:str,
+    db:sqlalchemy.orm.Session
+):
+    
     db_user = await GetUserByEmail(email=email,db=db)
     
     #return flase no user email found
@@ -77,8 +86,9 @@ async def login(email:str, password:str,db:sqlalchemy.orm.Session):
     
 
 
-async def current_user(db:sqlalchemy.orm.Session = Depends(get_db)
-                       ,token:str=Depends(oauth2schema)
+async def current_user(
+    db:sqlalchemy.orm.Session = Depends(get_db),
+    token:str=Depends(oauth2schema)
 ):
     try:
         payload = jwt.decode(token,JWT_SECRET_KEY,algorithms=['HS256'])
@@ -92,7 +102,11 @@ async def current_user(db:sqlalchemy.orm.Session = Depends(get_db)
     return  schemas.UserResponse.from_orm(db_user)
 
 
-async def create_post(user:schemas.UserResponse,post:schemas.PostRequest,db:sqlalchemy.orm.Session):
+async def create_post(
+    user:schemas.UserResponse,
+    post:schemas.PostRequest,
+    db:sqlalchemy.orm.Session
+):
     
     post = models.PostModel(**post.dict(),user_id = user.id)
     db.add(post)
@@ -103,7 +117,10 @@ async def create_post(user:schemas.UserResponse,post:schemas.PostRequest,db:sqla
     
     
 
-async def get_post_by_user(user:schemas.UserResponse,db:sqlalchemy.orm.Session):
+async def get_post_by_user(
+    user:schemas.UserResponse,
+    db:sqlalchemy.orm.Session
+):
     
     posts = db.query(models.PostModel).filter_by(user_id=user.id)
     # convert each post model to post chema and make list of posts and return them
@@ -111,7 +128,19 @@ async def get_post_by_user(user:schemas.UserResponse,db:sqlalchemy.orm.Session):
 
 
 
-async def get_post_detail(post_id:int,db:sqlalchemy.orm.Session):
+async def get_post_all(
+    db:sqlalchemy.orm.Session
+):
+    
+    posts = db.query(models.PostModel)
+    return list(map(schemas.PostResponse.from_orm,posts))
+
+
+
+async def get_post_detail(
+    post_id:int,
+    db:sqlalchemy.orm.Session
+):
     
     db_post = db.query(models.PostModel).filter(models.PostModel.id == post_id).first()
     
@@ -123,7 +152,23 @@ async def get_post_detail(post_id:int,db:sqlalchemy.orm.Session):
     
     
     
-async def delete_post(post:models.PostModel,db:sqlalchemy.orm.Session):
+async def get_user_detail(
+    user_id:int,
+    db:sqlalchemy.orm.Session
+):
+    
+    db_user = db.query(models.UserModel).filter(models.UserModel.id == user_id).first()
+    
+    if db_user is None:
+        raise HTTPException(status_code=404,detail='User not found')
+    
+    return schemas.UserResponse.from_orm(db_user)
+
+    
+async def delete_post(
+    post:models.PostModel,
+    db:sqlalchemy.orm.Session
+):
     
     db.delete(post)
     db.commit()

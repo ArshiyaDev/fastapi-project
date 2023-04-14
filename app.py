@@ -24,8 +24,9 @@ async def register_user(
 
 
 @app.post('/api/v1/login')
-async def login_user(from_data:security.OAuth2PasswordRequestForm = Depends(),
-                     db : orm.Session = Depends(services.get_db)
+async def login_user(
+    from_data:security.OAuth2PasswordRequestForm = Depends(),
+    db : orm.Session = Depends(services.get_db)
 ):
     db_user = await services.login(email=from_data.username,password=from_data.password,db=db)
     
@@ -36,20 +37,22 @@ async def login_user(from_data:security.OAuth2PasswordRequestForm = Depends(),
     # create and return token
     return await services.create_token(db_user) 
     
+
     
-    
-    
-@app.get('/api/users/current',response_model=schemas.UserResponse)
-async def current_user(user:schemas.UserResponse = Depends(services.current_user)):
+@app.get('/api/v1/users/current',response_model=schemas.UserResponse)
+async def current_user(
+    user:schemas.UserResponse = Depends(services.current_user)
+):
     
     return user
     
     
     
 @app.post('/api/v1/posts',response_model=schemas.PostResponse)
-async def create_post(post_request:schemas.PostRequest,
-                      user:schemas.UserRequest=Depends(services.current_user),
-                      db : orm.Session = Depends(services.get_db)
+async def create_post(
+    post_request:schemas.PostRequest,
+    user:schemas.UserRequest=Depends(services.current_user),
+    db : orm.Session = Depends(services.get_db)
 ):
     
     return await services.create_post(user = user,db=db,post = post_request)
@@ -65,20 +68,32 @@ async def get_post_byuser(
 
     return await services.get_post_by_user(user=user, db=db)
 
+@app.get('/api/v1/posts/all',response_model=List[schemas.PostResponse])
+async def get_post_all(
+    db : orm.Session = Depends(services.get_db)
+    
+):
 
+    return await services.get_post_all(db=db)
 
-@app.get('/api/posts/{post_id}',response_model=schemas.PostResponse)
+@app.get('/api/v1/posts/{post_id}',response_model=schemas.PostResponse)
 async def get_post_detail(
     post_id:int,
     db:orm.Session = Depends(services.get_db)
 ):
     
     post = await services.get_post_detail(post_id = post_id,db = db)
-   
-    
     return post
     
+
+@app.get('/api/v1/users/{user_id}',response_model=schemas.UserResponse)
+async def get_user_detail(
+    user_id:int,
+    db:orm.Session = Depends(services.get_db)
+):
     
+    return await services.get_user_detail(user_id == user_id,db=db)
+
     
 @app.delete('/api/v1/posts/{post_id}')
 async def delete_post(
