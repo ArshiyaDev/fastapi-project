@@ -10,6 +10,7 @@ pip install uvicorn
 pip install passlib
 pip install jwt
 ```
+or `pip install requirements.txt`
 
 * How cay you run project ?
 * you can write this command in your terminal: 
